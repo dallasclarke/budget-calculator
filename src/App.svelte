@@ -12,8 +12,8 @@
   let expenses = [...expensesData];
 
   $: total = expenses.reduce((acc, curr) => {
-    return acc += curr.amount;
-  }, 0)
+    return (acc += curr.amount);
+  }, 0);
 
   function removeExpense(id) {
     expenses = expenses.filter((item) => item.id !== id);
@@ -21,6 +21,16 @@
 
   function clearExpenses() {
     expenses = [];
+  }
+
+  function addExpense({ name, amount }) {
+    let expense = {
+      id: Math.random() * Date.now(),
+      name,
+      amount,
+    };
+
+    expenses = [expense, ...expenses];
   }
 
   // Context
@@ -32,7 +42,7 @@
 <!-- Components -->
 <Navbar />
 <main class="content">
-  <ExpenseForm />
+  <ExpenseForm {addExpense} />
   <Totals title="Total Expenses" {total} />
   <ExpenseList {expenses} />
   <button class="btn btn-primary btn-block" on:click={clearExpenses}>
