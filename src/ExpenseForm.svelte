@@ -1,14 +1,20 @@
 <script>
   import Title from "./Title.svelte";
-  
+
   let name = "";
   let amount = null;
-  
+
+  $: isEmpty = !name || !amount;
+
+  function handleSubmit() {
+    name = "";
+    amount = null;
+  }
 </script>
 
 <section class="form">
   <Title title="Add Expense" />
-  <form class="expense-form">
+  <form class="expense-form" on:submit|preventDefault={handleSubmit}>
     <div class="form-control">
       <label for="name">Name</label>
       <input type="text" id="name" bind:value={name} />
@@ -17,8 +23,15 @@
       <label for="amount">Amount</label>
       <input type="number" id="amount" bind:value={amount} />
     </div>
-    <p class="form-empty">Please fill out all form fields!</p>
-    <button type="submit" class="btn btn-block">Add Expense</button>
+    {#if isEmpty}
+      <p class="form-empty">Please fill out all form fields!</p>
+    {/if}
+    <button
+      type="submit"
+      class="btn btn-block"
+      class:disabled={isEmpty}
+      disabled={isEmpty}>Add Expense</button
+    >
     <button type="button" class="close-btn"
       ><i class="fas fa-times" /> Close</button
     >
