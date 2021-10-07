@@ -1,15 +1,16 @@
 <!-- JS Logic -->
 <script>
-  import { setContext } from "svelte";
+  import { setContext, onMount, afterUpdate } from "svelte";
 
   import Navbar from "./Navbar.svelte";
   import ExpenseList from "./ExpenseList.svelte";
   import Totals from "./Totals.svelte";
   import ExpenseForm from "./ExpenseForm.svelte";
+  import Modal from "./Modal.svelte";
 
   import expensesData from "./expenses";
 
-  let expenses = [...expensesData];
+  let expenses = [];
   let setName = "";
   let setAmount = null;
   let setId = null;
@@ -71,6 +72,20 @@
   // Context
   setContext("remove", removeExpense);
   setContext("modify", setMotifiedExpense);
+
+  function setLocalStorage() {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  }
+
+  onMount(() => {
+    expenses = localStorage.getItem("expenses")
+      ? JSON.parse(localStorage.getItem("expenses"))
+      : [];
+  });
+
+  afterUpdate(() => {
+    setLocalStorage();
+  });
 </script>
 
 <!-- CSS Logic -->
@@ -79,14 +94,16 @@
 <Navbar {showForm} />
 <main class="content">
   {#if isFormOpen}
-    <ExpenseForm
-      {addExpense}
-      name={setName}
-      amount={setAmount}
-      {isEditing}
-      {editExpense}
-      {hideForm}
-    />
+    <Modal>
+      <ExpenseForm
+        {addExpense}
+        name={setName}
+        amount={setAmount}
+        {isEditing}
+        {editExpense}
+        {hideForm}
+      />
+    </Modal>
   {/if}
   <Totals title="Total Expenses" {total} />
   <ExpenseList {expenses} />
