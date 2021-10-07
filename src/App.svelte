@@ -13,11 +13,23 @@
   let setName = "";
   let setAmount = null;
   let setId = null;
+  let isFormOpen = false;
 
   $: isEditing = setId ? true : false;
   $: total = expenses.reduce((acc, curr) => {
     return (acc += curr.amount);
   }, 0);
+
+  function showForm() {
+    isFormOpen = true;
+  }
+
+  function hideForm() {
+    isFormOpen = false;
+    setName = "";
+    setAmount = null;
+    setId = null;
+  }
 
   function removeExpense(id) {
     expenses = expenses.filter((item) => item.id !== id);
@@ -43,6 +55,7 @@
     setId = expense.id;
     setName = expense.name;
     setAmount = expense.amount;
+    showForm();
   }
 
   function editExpense({ name, amount }) {
@@ -63,15 +76,18 @@
 <!-- CSS Logic -->
 
 <!-- Components -->
-<Navbar />
+<Navbar {showForm} />
 <main class="content">
-  <ExpenseForm
-    {addExpense}
-    name={setName}
-    amount={setAmount}
-    {isEditing}
-    {editExpense}
-  />
+  {#if isFormOpen}
+    <ExpenseForm
+      {addExpense}
+      name={setName}
+      amount={setAmount}
+      {isEditing}
+      {editExpense}
+      {hideForm}
+    />
+  {/if}
   <Totals title="Total Expenses" {total} />
   <ExpenseList {expenses} />
   <button class="btn btn-primary btn-block" on:click={clearExpenses}>
