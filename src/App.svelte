@@ -10,7 +10,11 @@
   import expensesData from "./expenses";
 
   let expenses = [...expensesData];
+  let setName = "";
+  let setAmount = null;
+  let setId = null;
 
+  $: isEditing = setId ? true : false;
   $: total = expenses.reduce((acc, curr) => {
     return (acc += curr.amount);
   }, 0);
@@ -33,8 +37,27 @@
     expenses = [expense, ...expenses];
   }
 
+  function setMotifiedExpense(id) {
+    let expense = expenses.find((item) => item.id === id);
+
+    setId = expense.id;
+    setName = expense.name;
+    setAmount = expense.amount;
+  }
+
+  function editExpense({ name, amount }) {
+    expenses = expenses.map((item) => {
+      return item.id === setId ? { ...item, name, amount } : { ...item };
+    });
+
+    setId = null;
+    setAmount = null;
+    setName = "";
+  }
+
   // Context
   setContext("remove", removeExpense);
+  setContext("modify", setMotifiedExpense);
 </script>
 
 <!-- CSS Logic -->
@@ -42,7 +65,13 @@
 <!-- Components -->
 <Navbar />
 <main class="content">
-  <ExpenseForm {addExpense} />
+  <ExpenseForm
+    {addExpense}
+    name={setName}
+    amount={setAmount}
+    {isEditing}
+    {editExpense}
+  />
   <Totals title="Total Expenses" {total} />
   <ExpenseList {expenses} />
   <button class="btn btn-primary btn-block" on:click={clearExpenses}>
