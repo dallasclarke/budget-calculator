@@ -8,7 +8,8 @@
   import ExpenseForm from "./ExpenseForm.svelte";
   import Modal from "./Modal.svelte";
 
-  import expensesData from "./expenses";
+  // import Github from "./Github.svelte";
+  // import GithubAwait from "./GithubAwait.svelte";
 
   let expenses = [];
   let setName = "";
@@ -92,6 +93,7 @@
 
 <!-- Components -->
 <Navbar {showForm} />
+<!-- <GithubAwait /> -->
 <main class="content">
   {#if isFormOpen}
     <Modal>
